@@ -1,0 +1,23 @@
+{
+    "name": "EditMode",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "FluentAssert.dll",
+        "NSubstitute.dll",
+        "Castle.Core.dll",
+        "System.Diagnostics.EventLog.dll",
+        "System.Security.Principal.Windows.dll",
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
