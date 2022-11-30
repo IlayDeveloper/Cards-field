@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using GameCore.Services;
 using UnityEngine;
@@ -6,6 +7,7 @@ namespace GameCore.Models
 {
     public class GameFieldModel : MonoBehaviour
     {
+        public event Action OnDataUpdated = delegate {};
         public Texture2D[] Cards { get; private set; }
 
         [SerializeField] private int _totalCards;
@@ -58,6 +60,8 @@ namespace GameCore.Models
                 await request;
                 Cards[i] = request.Result;
             }
+            
+            OnDataUpdated.Invoke();
         }
 
         private static void RiseInitErrorMessage() =>
