@@ -29,17 +29,17 @@ namespace Tests.EditMode
             // assert
             gameFieldModel.Cards.Where(c => c != null).Count().ShouldBeEqualTo(totalCards);
         }
-        
+
         [Test]
         public void WhenGameFieldInitializedRefreshed_ThenAllCardsImageUpdated()
         {
             // prepare
             var gameObject = new GameObject();
             GameFieldModel gameFieldModel = gameObject.AddComponent<GameFieldModel>();
-            int totalCards = 6;
+            int totalCards = 1;
             var imageLoader = Substitute.For<ILoadImage>();
             imageLoader.LoadRandomTexture(Arg.Any<int>(), Arg.Any<int>())
-                .Returns(new Texture2D(200, 200));
+                .Returns(new Texture2D(0, 0), new Texture2D(0, 0));
             gameFieldModel.ConstructFromCode(totalCards, imageLoader);
             gameFieldModel.Start();
 
@@ -49,15 +49,15 @@ namespace Tests.EditMode
             gameFieldModel.Refresh();
 
             var refreshedIds = gameFieldModel.Cards.Select(c => c.GetInstanceID()).ToList();
+
             // assert
             List<bool> notRefreshed = new List<bool>();
-            
-            for (int i = 0; i < cardsID.Count(); i++)
+            for (int i = 0; i < cardsID.Count; i++)
             {
-                notRefreshed.Add(cardsID[i] == refreshedIds[i]);    
+                notRefreshed.Add(cardsID[i] == refreshedIds[i]);
             }
 
-            notRefreshed.Count(result => result).ShouldBeEqualTo(0);
+            notRefreshed.Where(result => result).Count().ShouldBeEqualTo(0);
         }
     }
 }
