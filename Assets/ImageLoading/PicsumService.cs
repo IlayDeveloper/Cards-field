@@ -1,11 +1,12 @@
 using System;
 using System.Threading.Tasks;
+using GameCore.Services;
 using UnityEngine;
 using UnityHttpWrapper;
 
 namespace ImageLoading
 {
-    public class PicsumService : MonoBehaviour
+    public class PicsumService : MonoBehaviour, ILoadImage
     {
         private IHttpClient _client;
 

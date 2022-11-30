@@ -1,10 +1,7 @@
 {
-    "name": "ImageLoading",
+    "name": "GameCore",
     "rootNamespace": "",
-    "references": [
-        "GUID:0a985dd485f8f8b198d7b420db669384",
-        "GUID:814395b97f9be1075893be36d479e0e9"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
