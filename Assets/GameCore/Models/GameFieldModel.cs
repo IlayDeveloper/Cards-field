@@ -7,20 +7,35 @@ namespace GameCore.Models
     public class GameFieldModel : MonoBehaviour
     {
         public Texture2D[] Cards { get; private set; }
-        
+
         [SerializeField] private int _totalCards;
 
         private ILoadImage _imageLoader;
+        private bool _isInitialized;
 
         private void Awake()
         {
+            if (_isInitialized)
+            {
+                RiseInitErrorMessage();
+                return;
+            }
+            
             _imageLoader = GetComponent<ILoadImage>();
+            _isInitialized = true;
         }
 
         public void ConstructFromCode(int totalCards, ILoadImage imageLoader)
         {
+            if (_isInitialized)
+            {
+                RiseInitErrorMessage();
+                return;
+            }
+
             _totalCards = totalCards;
             _imageLoader = imageLoader;
+            _isInitialized = true;
         }
 
         public async void Start()
@@ -34,5 +49,8 @@ namespace GameCore.Models
                 Cards[i] = request.Result;
             }
         }
+
+        private static void RiseInitErrorMessage() =>
+            Debug.LogError($"Try to init {nameof(GameFieldModel)}, it's already initialized!");
     }
 }
