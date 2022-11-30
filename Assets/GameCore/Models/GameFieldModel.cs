@@ -20,7 +20,7 @@ namespace GameCore.Models
                 RiseInitErrorMessage();
                 return;
             }
-            
+
             _imageLoader = GetComponent<ILoadImage>();
             _isInitialized = true;
         }
@@ -49,7 +49,7 @@ namespace GameCore.Models
         {
             await LoadNewCards();
         }
-        
+
         private async Task LoadNewCards()
         {
             for (int i = 0; i < _totalCards; i++)
@@ -59,8 +59,8 @@ namespace GameCore.Models
                 Cards[i] = request.Result;
             }
         }
-        
+
         private static void RiseInitErrorMessage() =>
-            Debug.LogError($"Try to init {nameof(GameFieldModel)}, it's already initialized!");
+            Debug.LogError($"Try to init {nameof(GameFieldModel)}, but it's already initialized!");
     }
 }

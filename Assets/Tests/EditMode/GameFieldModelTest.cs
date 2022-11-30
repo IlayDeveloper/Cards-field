@@ -11,46 +11,49 @@ namespace Tests.EditMode
 {
     public class GameFieldModelTest
     {
+        private GameFieldModel _gameFieldModel;
+        private ILoadImage _imageLoader;
+        
+        [SetUp]
+        public void Init()
+        {
+            var gameObject = new GameObject();
+            _gameFieldModel = gameObject.AddComponent<GameFieldModel>();
+            _imageLoader = Substitute.For<ILoadImage>();
+        }
+        
         [Test]
         public void WhenGameFieldInitialized_ThenAllCardsImageLoaded()
         {
             // prepare
-            var gameObject = new GameObject();
-            GameFieldModel gameFieldModel = gameObject.AddComponent<GameFieldModel>();
             int totalCards = 6;
-            var imageLoader = Substitute.For<ILoadImage>();
-            imageLoader.LoadRandomTexture(Arg.Any<int>(), Arg.Any<int>())
+            _imageLoader.LoadRandomTexture(Arg.Any<int>(), Arg.Any<int>())
                 .Returns(new Texture2D(200, 200));
-            gameFieldModel.ConstructFromCode(totalCards, imageLoader);
+            _gameFieldModel.ConstructFromCode(totalCards, _imageLoader);
 
             // act
-            gameFieldModel.Start();
+            _gameFieldModel.Start();
 
             // assert
-            gameFieldModel.Cards.Where(c => c != null).Count().ShouldBeEqualTo(totalCards);
+            _gameFieldModel.Cards.Where(c => c != null).Count().ShouldBeEqualTo(totalCards);
         }
 
         [Test]
         public void WhenGameFieldInitializedRefreshed_ThenAllCardsImageUpdated()
         {
             // prepare
-            var gameObject = new GameObject();
-            GameFieldModel gameFieldModel = gameObject.AddComponent<GameFieldModel>();
             int totalCards = 1;
-            var imageLoader = Substitute.For<ILoadImage>();
-            imageLoader.LoadRandomTexture(Arg.Any<int>(), Arg.Any<int>())
+            _imageLoader.LoadRandomTexture(Arg.Any<int>(), Arg.Any<int>())
                 .Returns(new Texture2D(0, 0), new Texture2D(0, 0));
-            gameFieldModel.ConstructFromCode(totalCards, imageLoader);
-            gameFieldModel.Start();
-
-            var cardsID = gameFieldModel.Cards.Select(c => c.GetInstanceID()).ToList();
+            _gameFieldModel.ConstructFromCode(totalCards, _imageLoader);
+            _gameFieldModel.Start();
+            var cardsID = _gameFieldModel.Cards.Select(c => c.GetInstanceID()).ToList();
 
             // act
-            gameFieldModel.Refresh();
-
-            var refreshedIds = gameFieldModel.Cards.Select(c => c.GetInstanceID()).ToList();
+            _gameFieldModel.Refresh();
 
             // assert
+            var refreshedIds = _gameFieldModel.Cards.Select(c => c.GetInstanceID()).ToList();
             List<bool> notRefreshed = new List<bool>();
             for (int i = 0; i < cardsID.Count; i++)
             {
