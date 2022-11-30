@@ -1,0 +1,16 @@
+{
+    "name": "ImageLoading",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0a985dd485f8f8b198d7b420db669384"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

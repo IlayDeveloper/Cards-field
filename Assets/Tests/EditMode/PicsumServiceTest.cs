@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using FluentAssert;
-using ImageLoading;
 using NSubstitute;
 using NUnit.Framework;
 using UnityEditor;

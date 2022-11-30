@@ -1,7 +1,10 @@
 {
     "name": "EditMode",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:0a985dd485f8f8b198d7b420db669384",
+        "GUID:83b79055692f47fa806be3f918bf1e1c"
+    ],
     "includePlatforms": [
         "Editor"
     ],
