@@ -15,6 +15,11 @@ namespace ImageLoading
             _client = client;
         }
 
+        private void Awake()
+        {
+            _client = GetComponent<IHttpClient>();
+        }
+
         public async Task<Texture2D> LoadRandomTexture(int width, int height)
         {
             var uri = $"https://picsum.photos/{width}/{height}";
