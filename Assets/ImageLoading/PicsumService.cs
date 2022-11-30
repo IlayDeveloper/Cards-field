@@ -1,26 +1,37 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityHttpWrapper;
 
-public class PicsumService : MonoBehaviour
+namespace ImageLoading
 {
-    private IHttpClient _client;
-
-    public void Resolve(IHttpClient client)
+    public class PicsumService : MonoBehaviour
     {
-        _client = client;
-    }
+        private IHttpClient _client;
 
-    public async Task<Texture2D> LoadRandomTexture(int width, int height)
-    {
-        string uri = $"https://picsum.photos/{width}/{height}";
-        Task<byte[]> request = _client.SendRequest(uri);
-        
-        await request;
-        
-        Debug.Log(request.Result.Length);
-        var texture = new Texture2D(width, height);
-        texture.LoadImage(request.Result);
-        return texture;
+        public void Resolve(IHttpClient client)
+        {
+            _client = client;
+        }
+
+        public async Task<Texture2D> LoadRandomTexture(int width, int height)
+        {
+            var uri = $"https://picsum.photos/{width}/{height}";
+            Task<byte[]> request = _client.SendRequest(uri);
+
+            try
+            {
+                await request;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            var texture = new Texture2D(width, height);
+            texture.LoadImage(request.Result);
+            return texture;
+        }
     }
 }
