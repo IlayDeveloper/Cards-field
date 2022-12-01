@@ -95,7 +95,7 @@ namespace GameCore.Models
         private async Task LoadOneByOne()
         {
             _refreshInProgress = true;
-            for (int i = 0; i < _totalCards; i++)
+            for (int i = _totalCards - 1; i >= 0; i--)
             {
                 Task<Texture2D> request = _imageLoader.LoadRandomTexture(_cardWidth, _cardHeight);
                 await request;
