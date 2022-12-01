@@ -134,7 +134,7 @@ namespace GameCore.Presenters
             var options = new List<Dropdown.OptionData>();
             options.Add(new Dropdown.OptionData(LoadMode.AllAtOnce.ToString()));
             options.Add(new Dropdown.OptionData(LoadMode.OneByOne.ToString()));
-            options.Add(new Dropdown.OptionData(LoadMode.SeparatedOnLoadCompleted.ToString()));
+            options.Add(new Dropdown.OptionData(LoadMode.OnLoadCompleted.ToString()));
             _dropdown.options = options;
         }
         

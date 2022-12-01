@@ -9,7 +9,7 @@ namespace GameCore.Models
     {
         AllAtOnce = 0,
         OneByOne = 1,
-        SeparatedOnLoadCompleted = 2,
+        OnLoadCompleted = 2,
     }
 
     public class GameFieldModel : MonoBehaviour
@@ -70,7 +70,7 @@ namespace GameCore.Models
                 case LoadMode.OneByOne:
                     LoadOneByOne();
                     break;
-                case LoadMode.SeparatedOnLoadCompleted:
+                case LoadMode.OnLoadCompleted:
                     LoadSeparated();
                     break;
                 default:
