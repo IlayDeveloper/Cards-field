@@ -2,12 +2,12 @@
 
 ## Описание задания 
 
-### [Текстовое описание - ТЗ](Test_description/Task.pdf)
+### [Текстовое описание - ТЗ](Test-description/Task.pdf)
 
-### [Демо требуемого задания](Test_description/Demo.mp4)
+### [Демо требуемого задания](Test-description/Demo.mp4)
 
 ### Подложка для карточек
-![Карточка](Test_description/empty-card.png)
+![Карточка](Test-description/empty-card.png)
 
 ## Решение
 
