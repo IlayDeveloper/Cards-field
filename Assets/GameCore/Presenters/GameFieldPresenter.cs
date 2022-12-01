@@ -19,18 +19,30 @@ namespace GameCore.Presenters
         private void Awake()
         {
             _model = GetComponent<GameFieldModel>();
+            RenderDropdown();
+        }
+
+        private void RenderDropdown()
+        {
+            var options = new List<Dropdown.OptionData>();
+            options.Add(new Dropdown.OptionData(LoadMode.AllAtOnce.ToString()));
+            options.Add(new Dropdown.OptionData(LoadMode.OneByOne.ToString()));
+            options.Add(new Dropdown.OptionData(LoadMode.SeparatedOnLoadCompleted.ToString()));
+            _dropdown.options = options;
         }
 
         private void OnEnable()
         {
             _model.OnDataUpdated += UpdateView;
             _loadButton.onClick.AddListener(_model.Refresh);
+            _dropdown.onValueChanged.AddListener(ChangeLoadingMode);
         }
 
         private void OnDisable()
         {
             _model.OnDataUpdated -= UpdateView;
             _loadButton.onClick.RemoveListener(_model.Refresh);
+            _dropdown.onValueChanged.RemoveListener(ChangeLoadingMode);
         }
 
         private void UpdateView()
@@ -43,7 +55,11 @@ namespace GameCore.Presenters
             for (var i = 0; i < _model.Cards.Length; i++)
             {
                 var card = _model.Cards[i];
-                _spawnedCards[i].sprite =
+                var spawnedCard = _spawnedCards[i];
+                if(spawnedCard.sprite.texture == card)
+                    continue;
+                
+                spawnedCard.sprite =
                     Sprite.Create(card, new Rect(0, 0, card.width, card.height), new Vector2(0.5f, 0.5f));
             }
         }
@@ -56,6 +72,11 @@ namespace GameCore.Presenters
                 var cardView = Instantiate(_cardPrefab, _gameField);
                 _spawnedCards.Add(cardView.GetComponent<Image>());
             }
+        }
+        
+        private void ChangeLoadingMode(int arg)
+        {
+            _model.LoadMode = (LoadMode)arg;
         }
     }
 }

@@ -5,12 +5,22 @@ using UnityEngine;
 
 namespace GameCore.Models
 {
+    public enum LoadMode
+    {
+        AllAtOnce = 0,
+        OneByOne = 1,
+        SeparatedOnLoadCompleted = 2,
+    }
+
     public class GameFieldModel : MonoBehaviour
     {
-        public event Action OnDataUpdated = delegate {};
+        public event Action OnDataUpdated = delegate { };
         public Texture2D[] Cards { get; private set; }
+        public LoadMode LoadMode { get; set; }
 
         [SerializeField] private int _totalCards;
+        [SerializeField] private int _cardWidth;
+        [SerializeField] private int _cardHeight;
 
         private ILoadImage _imageLoader;
         private bool _isInitialized;
@@ -40,28 +50,64 @@ namespace GameCore.Models
             _isInitialized = true;
         }
 
-        public async void Start()
+        public void Start()
         {
             Cards = new Texture2D[_totalCards];
-
-            await LoadNewCards();
+            LoadAllAtOnce();
         }
 
-        public async void Refresh()
+        public void Refresh()
         {
-            await LoadNewCards();
+            switch (LoadMode)
+            {
+                case LoadMode.AllAtOnce:
+                    LoadAllAtOnce();
+                    break;
+                case LoadMode.OneByOne:
+                    LoadOneByOne();
+                    break;
+                case LoadMode.SeparatedOnLoadCompleted:
+                    LoadSeparated();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(LoadMode), LoadMode, null);
+            }
         }
 
-        private async Task LoadNewCards()
+        private async Task LoadAllAtOnce()
         {
             for (int i = 0; i < _totalCards; i++)
             {
-                Task<Texture2D> request = _imageLoader.LoadRandomTexture(200, 200);
+                Task<Texture2D> request = _imageLoader.LoadRandomTexture(_cardWidth, _cardHeight);
                 await request;
                 Cards[i] = request.Result;
             }
-            
+
             OnDataUpdated.Invoke();
+        }
+
+        private async Task LoadOneByOne()
+        {
+            for (int i = 0; i < _totalCards; i++)
+            {
+                Task<Texture2D> request = _imageLoader.LoadRandomTexture(_cardWidth, _cardHeight);
+                await request;
+                Cards[i] = request.Result;
+                OnDataUpdated.Invoke();
+            }
+        }
+
+        private void LoadSeparated()
+        {
+            for (int i = 0; i < _totalCards; i++)
+            {
+                var index = i;
+                _imageLoader.LoadRandomTexture(_cardWidth, _cardHeight, texture =>
+                {
+                    Cards.SetValue(texture, index);
+                    OnDataUpdated.Invoke();
+                });
+            }
         }
 
         private static void RiseInitErrorMessage() =>

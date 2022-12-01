@@ -1432,7 +1432,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73b1f5800c5441e58f6f2e3f478c9b72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _totalCards: 3
+  _totalCards: 5
+  _cardWidth: 150
+  _cardHeight: 200
 --- !u!114 &1529400686
 MonoBehaviour:
   m_ObjectHideFlags: 0
