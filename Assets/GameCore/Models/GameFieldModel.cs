@@ -24,6 +24,7 @@ namespace GameCore.Models
 
         private ILoadImage _imageLoader;
         private bool _isInitialized;
+        private bool _refreshInProgress;
 
         private void Awake()
         {
@@ -58,6 +59,9 @@ namespace GameCore.Models
 
         public void Refresh()
         {
+            if(_refreshInProgress)
+                return;
+            
             switch (LoadMode)
             {
                 case LoadMode.AllAtOnce:
@@ -76,6 +80,7 @@ namespace GameCore.Models
 
         private async Task LoadAllAtOnce()
         {
+            _refreshInProgress = true;
             for (int i = 0; i < _totalCards; i++)
             {
                 Task<Texture2D> request = _imageLoader.LoadRandomTexture(_cardWidth, _cardHeight);
@@ -83,11 +88,13 @@ namespace GameCore.Models
                 Cards[i] = request.Result;
             }
 
+            _refreshInProgress = false;
             OnDataUpdated.Invoke();
         }
 
         private async Task LoadOneByOne()
         {
+            _refreshInProgress = true;
             for (int i = 0; i < _totalCards; i++)
             {
                 Task<Texture2D> request = _imageLoader.LoadRandomTexture(_cardWidth, _cardHeight);
@@ -95,10 +102,14 @@ namespace GameCore.Models
                 Cards[i] = request.Result;
                 OnDataUpdated.Invoke();
             }
+            
+            _refreshInProgress = false;
         }
 
         private void LoadSeparated()
         {
+            _refreshInProgress = true;
+            int updateCounter = 0;
             for (int i = 0; i < _totalCards; i++)
             {
                 var index = i;
@@ -106,6 +117,8 @@ namespace GameCore.Models
                 {
                     Cards.SetValue(texture, index);
                     OnDataUpdated.Invoke();
+                    if (++updateCounter == _totalCards)
+                        _refreshInProgress = false;
                 });
             }
         }
