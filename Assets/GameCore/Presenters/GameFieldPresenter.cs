@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DG.Tweening;
-using DG.Tweening.Core;
 using GameCore.Models;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,21 +19,13 @@ namespace GameCore.Presenters
         private List<Image> _spawnedCards;
         private GameFieldModel _model;
         private Queue<Image[]> _cardsToUpdate;
+        private bool _animsInProgress;
 
         private void Awake()
         {
             _model = GetComponent<GameFieldModel>();
             _cardsToUpdate = new Queue<Image[]>();
-            RenderDropdown();
-        }
-
-        private void RenderDropdown()
-        {
-            var options = new List<Dropdown.OptionData>();
-            options.Add(new Dropdown.OptionData(LoadMode.AllAtOnce.ToString()));
-            options.Add(new Dropdown.OptionData(LoadMode.OneByOne.ToString()));
-            options.Add(new Dropdown.OptionData(LoadMode.SeparatedOnLoadCompleted.ToString()));
-            _dropdown.options = options;
+            InitDropdown();
         }
 
         private void OnEnable()
@@ -56,6 +47,7 @@ namespace GameCore.Presenters
             if (_spawnedCards == null)
             {
                 InitCards();
+                return;
             }
 
             var refreshedCards = new List<Image>();
@@ -68,15 +60,13 @@ namespace GameCore.Presenters
 
                 refreshedCards.Add(spawnedCard);
                 spawnedCard.sprite =
-                    Sprite.Create(card, new Rect(0, 0, card.width, card.height), new Vector2(0.5f, 0.5f));
+                    ConvertToSprite(card);
             }
 
             _cardsToUpdate.Enqueue(refreshedCards.ToArray());
             if (_animsInProgress == false)
                 AnimateCards();
         }
-
-        private bool _animsInProgress;
 
         private async Task AnimateCards()
         {
@@ -95,16 +85,6 @@ namespace GameCore.Presenters
             await Task.WhenAll(RotateAboutY(transforms, 180));
 
             AnimateCards();
-        }
-
-        private void InitCards()
-        {
-            _spawnedCards = new List<Image>();
-            for (var index = 0; index < _model.Cards.Length; index++)
-            {
-                var cardView = Instantiate(_cardPrefab, _gameField);
-                _spawnedCards.Add(cardView.GetComponent<Image>());
-            }
         }
 
         private async void RefreshCards()
@@ -126,7 +106,6 @@ namespace GameCore.Presenters
                 .AsyncWaitForCompletion()).ToList();
         }
 
-
         private void ChangeLoadingMode(int arg)
         {
             _model.LoadMode = (LoadMode)arg;
@@ -137,19 +116,30 @@ namespace GameCore.Presenters
             _loadButton.interactable = state;
             _dropdown.interactable = state;
         }
-    }
-
-    public static class Extensions
-    {
-        public static async System.Threading.Tasks.Task AsyncWaitForCompletion(this Tween t)
+        
+        private void InitCards()
         {
-            if (!t.active)
+            _spawnedCards = new List<Image>();
+            for (var index = 0; index < _model.Cards.Length; index++)
             {
-                if (Debugger.logPriority > 0) Debugger.LogInvalidTween(t);
-                return;
+                var cardView = Instantiate(_cardPrefab, _gameField);
+                var image = cardView.GetComponent<Image>();
+                image.sprite = ConvertToSprite(_model.Cards[index]);
+                _spawnedCards.Add(image);
             }
-
-            while (t.active && !t.IsComplete()) await System.Threading.Tasks.Task.Yield();
         }
+        
+        private void InitDropdown()
+        {
+            var options = new List<Dropdown.OptionData>();
+            options.Add(new Dropdown.OptionData(LoadMode.AllAtOnce.ToString()));
+            options.Add(new Dropdown.OptionData(LoadMode.OneByOne.ToString()));
+            options.Add(new Dropdown.OptionData(LoadMode.SeparatedOnLoadCompleted.ToString()));
+            _dropdown.options = options;
+        }
+        
+        private static Sprite ConvertToSprite(Texture2D card) =>
+            Sprite.Create(card, new Rect(0, 0, card.width, card.height), 
+                new Vector2(0.5f, 0.5f));
     }
 }

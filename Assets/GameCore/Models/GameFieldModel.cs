@@ -34,8 +34,14 @@ namespace GameCore.Models
                 return;
             }
 
+            Cards = new Texture2D[_totalCards];
             _imageLoader = GetComponent<ILoadImage>();
             _isInitialized = true;
+        }
+
+        public void Start()
+        {
+            LoadAllAtOnce();
         }
 
         public void ConstructFromCode(int totalCards, ILoadImage imageLoader)
@@ -51,17 +57,11 @@ namespace GameCore.Models
             _isInitialized = true;
         }
 
-        public void Start()
-        {
-            Cards = new Texture2D[_totalCards];
-            LoadAllAtOnce();
-        }
-
         public void Refresh()
         {
-            if(_refreshInProgress)
+            if (_refreshInProgress)
                 return;
-            
+
             switch (LoadMode)
             {
                 case LoadMode.AllAtOnce:
@@ -102,7 +102,7 @@ namespace GameCore.Models
                 Cards[i] = request.Result;
                 OnDataUpdated.Invoke();
             }
-            
+
             _refreshInProgress = false;
         }
 
