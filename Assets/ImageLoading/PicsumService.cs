@@ -9,7 +9,7 @@ namespace ImageLoading
     public class PicsumService : MonoBehaviour, ILoadImage
     {
         private const string Url = "https://picsum.photos";
-        
+
         private IHttpClient _client;
 
         public void Resolve(IHttpClient client)
@@ -33,8 +33,13 @@ namespace ImageLoading
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                throw new Exception(e.Message);
+            }
+
+            if (request.Result.Length == 0)
+            {
+                Debug.LogError("Network error!");
+                return GenerateFailedTexture(width, height);
             }
 
             var texture = new Texture2D(width, height);
@@ -59,7 +64,12 @@ namespace ImageLoading
 
             var texture = new Texture2D(width, height);
             texture.LoadImage(request.Result);
-           onCompleted.Invoke(texture);
+            onCompleted.Invoke(texture);
+        }
+
+        private static Texture2D GenerateFailedTexture(int width, int height)
+        {
+           return new Texture2D(width, height);
         }
     }
 }
